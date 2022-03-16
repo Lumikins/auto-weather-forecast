@@ -29,7 +29,6 @@ if('geolocation' in navigator){
 function setPosition(position){
   let latitude = position.coords.latitude;
   let longitude = position.coords.longitude;
-  
   getWeather(latitude, longitude);
 }
 
@@ -69,4 +68,23 @@ function displayWeather(){
   tempElement.innerHTML = `${weather.temp}°<span>C</span>`;
   descElement.innerHTML = weather.description;
   locationElement.innerHTML = `${weather.city}, ${weather.country}`;
+}
+
+// créer un intervalle pour la récupération des coordonnées aléatoires
+
+setInterval(randomLocation, 1000 * 5);
+
+// générer des coordonnées aléatoires et obtenir les données de l'API
+
+function randomLocation(){
+  const latMax = 90;
+  const latMin = -90;
+  const lonMax = 180;
+  const lonMin = -180;
+  const fixed = 3;
+
+  let lat = (Math.random() * (latMax - latMin) + latMin).toFixed(fixed) * 1;
+  let lon = (Math.random() * (lonMax - lonMin) + lonMin).toFixed(fixed) * 1;
+  
+  getWeather(lat, lon);
 }
