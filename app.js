@@ -14,3 +14,12 @@ const key = "50640bf15a324eb3339a90625244b050";
 // Lang support
 
 const lang = "fr";
+
+// vérifier si le navigateur prend en charge la géolocalisation
+
+if('geolocation' in navigator){
+  navigator.geolocation.getCurrentPosition(setPosition, showError);
+}else{
+  notificationElement.style.display = "block";
+  notificationElement.innerHTML = "<p>Browser doesn't support Geolocation</p>";
+}
