@@ -23,3 +23,19 @@ if('geolocation' in navigator){
   notificationElement.style.display = "block";
   notificationElement.innerHTML = "<p>Browser doesn't support Geolocation</p>";
 }
+
+// localisation de l'utilisateur
+
+function setPosition(position){
+  let latitude = position.coords.latitude;
+  let longitude = position.coords.longitude;
+  
+  getWeather(latitude, longitude);
+}
+
+// afficher une erreur lors de problème du service de géolocalisation
+
+function showError(error){
+  notificationElement.style.display = "block";
+  notificationElement.innerHTML = `<p> ${error.message} </p>`;
+}
