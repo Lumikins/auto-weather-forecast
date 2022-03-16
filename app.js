@@ -39,3 +39,34 @@ function showError(error){
   notificationElement.style.display = "block";
   notificationElement.innerHTML = `<p> ${error.message} </p>`;
 }
+
+// obtenir les détails météorologiques de l'API
+
+function getWeather(latitude, longitude){
+  let api = `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}&units=metric&lang=${lang}`;
+  
+  fetch(api)
+      .then(function(response){
+          let data = response.json();
+          return data;
+      })
+      .then(function(data){
+          weather.temp = Math.floor(data.main.temp);
+          weather.description = data.weather[0].description;
+          weather.iconId = data.weather[0].icon;
+          weather.city = data.name;
+          weather.country = data.sys.country;
+      })
+      .then(function(){
+          displayWeather();
+      });
+}
+
+// afficher les données météorologiques sur l'interface utilisateur
+
+function displayWeather(){
+  iconElement.innerHTML = `<img src="icons/${weather.iconId}.svg"/>`;
+  tempElement.innerHTML = `${weather.temp}°<span>C</span>`;
+  descElement.innerHTML = weather.description;
+  locationElement.innerHTML = `${weather.city}, ${weather.country}`;
+}
