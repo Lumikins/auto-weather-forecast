@@ -18,33 +18,43 @@ const key = "50640bf15a324eb3339a90625244b050";
 
 const lang = "fr";
 
-// vérifier si le navigateur prend en charge la géolocalisation
+// appel initial à la fonction pour afficher la météo dans un emplacement aléatoire
 
-if('geolocation' in navigator){
-  navigator.geolocation.getCurrentPosition(setPosition, showError);
-}else{
-  notificationElement.style.display = "block";
-  notificationElement.innerHTML = "<p>Browser doesn't support Geolocation</p>";
-}
+randomLocation();
 
-// localisation de l'utilisateur
+// créer un intervalle pour la récupération des coordonnées aléatoires toutes les 30 secondes
 
-function setPosition(position){
-  let latitude = position.coords.latitude;
-  let longitude = position.coords.longitude;
-  getWeather(latitude, longitude);
-}
+setInterval(randomLocation, 5000 * 6);
 
-// afficher une erreur lors de problème du service de géolocalisation
+// générer des coordonnées aléatoires à partir du fichier JSON des villes du monde, récupérer les données de l'API correspondant à la longitude et la latitude de cette ville aléatoire et les afficher sur l'interface utilisateur
 
-function showError(error){
-  notificationElement.style.display = "block";
-  notificationElement.innerHTML = `<p> ${error.message} </p>`;
+function randomLocation(){
+
+  const cities = './city.list.min.json';
+
+  fetch(cities)
+    .then(function(response){
+      let data = response.json();
+      return data;
+    })
+    .then(function(data){
+      let dataString = JSON.parse(JSON.stringify(data))
+      for(let i=0; i<dataString.length; i++){
+        dataString[i].id = i
+      }
+      let id = Math.floor(Math.random() * 209579)
+        if (dataString.map(a => a.id == id)){
+          let latitude = dataString[id].coord.lat
+          let longitude = dataString[id].coord.lon
+          getWeather(latitude, longitude)
+        }
+    });
 }
 
 // obtenir les détails météorologiques de l'API
 
 function getWeather(latitude, longitude){
+  
   let api = `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}&units=metric&lang=${lang}`;
   
   fetch(api)
@@ -71,33 +81,4 @@ function displayWeather(){
   tempElement.innerHTML = `${weather.temp}°<span>C</span>`;
   descElement.innerHTML = weather.description;
   locationElement.innerHTML = `${weather.city}, ${weather.country}`;
-}
-
-// créer un intervalle pour la récupération des coordonnées aléatoires toutes les 30 secondes
-
-setInterval(randomLocation, 5000 * 6);
-
-// générer des coordonnées aléatoires à partir du fichier JSON des villes du monde, récupérer les données de l'API correspondant à la longitude et la latitude de cette ville aléatoire et les afficher sur l'interface utilisateur
-
-function randomLocation(){
-
-  const cities = './city.list.min.json';
-
-  fetch(cities)
-    .then(function(response){
-      let data = response.json();
-      return data;
-    })
-    .then(function(data){
-      let dataString = JSON.parse(JSON.stringify(data))
-      for(let i=0; i<dataString.length; i++){
-        dataString[i].id = i
-      }
-      let id = Math.floor(Math.random() * 209579)
-        if (dataString.map(a => a.id == id)){
-          let longitude = dataString[id].coord.lon
-          let latitude = dataString[id].coord.lat
-          getWeather(latitude, longitude)
-        }
-    });
 }
