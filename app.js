@@ -1,4 +1,5 @@
 // sélection d'éléments
+
 const iconElement = document.querySelector(".weather-icon");
 const tempElement = document.querySelector(".temp-val p");
 const descElement = document.querySelector(".temp-desc p");
@@ -6,9 +7,11 @@ const locationElement = document.querySelector(".location p");
 const notificationElement = document.querySelector(".notification");
 
 // app data
+
 const weather = {};
 
 // API KEY
+
 const key = "50640bf15a324eb3339a90625244b050";
 
 // Lang support
@@ -70,21 +73,52 @@ function displayWeather(){
   locationElement.innerHTML = `${weather.city}, ${weather.country}`;
 }
 
-// créer un intervalle pour la récupération des coordonnées aléatoires
+// créer un intervalle pour la récupération des coordonnées aléatoires toutes les 30 secondes
 
-setInterval(randomLocation, 1000 * 5);
+setInterval(randomLocation, 5000 * 6);
 
-// générer des coordonnées aléatoires et obtenir les données de l'API
+// générer des coordonnées aléatoires à partir du fichier JSON des villes du monde
 
 function randomLocation(){
-  const latMax = 90;
-  const latMin = -90;
-  const lonMax = 180;
-  const lonMin = -180;
-  const fixed = 3;
 
-  let lat = (Math.random() * (latMax - latMin) + latMin).toFixed(fixed) * 1;
-  let lon = (Math.random() * (lonMax - lonMin) + lonMin).toFixed(fixed) * 1;
-  
-  getWeather(lat, lon);
+  const cities = './city.list.min.json';
+
+  fetch(cities)
+    .then(function(response){
+      let data = response.json();
+      return data;
+    })
+    .then(function(data){
+      let dataString = JSON.parse(JSON.stringify(data))
+      for(let i=0; i<dataString.length; i++){
+        dataString[i].id = i
+      }
+      let id = Math.floor(Math.random() * 209579)
+        if (dataString.map(a => a.id == id)){
+          let city = dataString[id].name
+          getRandomWeather(city)
+        }
+    });
+}
+
+// récupérer les données de l'API correspondant à la ville aléatoire générée dans la fonction précédente, et les afficher sur l'interface utilisateur
+
+function getRandomWeather(city){
+    let api = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric&lang=${lang}`;
+    
+    fetch(api)
+      .then(function(response){
+          let data = response.json();
+          return data;
+      })
+      .then(function(data){
+          weather.temp = Math.floor(data.main.temp);
+          weather.description = data.weather[0].description;
+          weather.iconId = data.weather[0].icon;
+          weather.city = data.name;
+          weather.country = data.sys.country;
+      })
+      .then(function(){
+          displayWeather();
+      });
 }
