@@ -55,7 +55,7 @@ function randomLocation(){
 
 function getWeather(latitude, longitude){
   
-  let api = `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}&units=metric&lang=${lang}`;
+  let api = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}&units=metric&lang=${lang}`;
   
   fetch(api)
       .then(function(response){
@@ -79,6 +79,6 @@ function getWeather(latitude, longitude){
 function displayWeather(){
   iconElement.innerHTML = `<img src="icons/${weather.iconId}.svg"/>`;
   tempElement.innerHTML = `${weather.temp}°<span>C</span>`;
-  descElement.innerHTML = weather.description;
+  descElement.innerHTML = weather.description.toUpperCase();
   locationElement.innerHTML = `${weather.city}, ${weather.country}`;
 }
