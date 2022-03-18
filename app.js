@@ -26,7 +26,7 @@ randomLocation();
 
 setInterval(randomLocation, 5000 * 6);
 
-// générer des coordonnées aléatoires à partir du fichier JSON des villes du monde, récupérer les données de l'API correspondant à la longitude et la latitude de cette ville aléatoire et les afficher sur l'interface utilisateur
+// générer des coordonnées aléatoires à partir du fichier JSON des villes du monde, récupérer les données de l'API correspondant à cette ville aléatoire et les afficher sur l'interface utilisateur
 
 function randomLocation(){
 
@@ -44,18 +44,17 @@ function randomLocation(){
       }
       let id = Math.floor(Math.random() * 209579)
         if (dataString.map(a => a.id == id)){
-          let latitude = dataString[id].coord.lat
-          let longitude = dataString[id].coord.lon
-          getWeather(latitude, longitude)
+          let city = dataString[id].name
+          getWeather(city)
         }
     });
 }
 
 // obtenir les détails météorologiques de l'API
 
-function getWeather(latitude, longitude){
+function getWeather(city){
   
-  let api = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}&units=metric&lang=${lang}`;
+  let api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric&lang=${lang}`;
   
   fetch(api)
       .then(function(response){
