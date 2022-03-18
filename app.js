@@ -18,13 +18,51 @@ const key = "50640bf15a324eb3339a90625244b050";
 
 const lang = "fr";
 
-// appel initial à la fonction pour afficher la météo dans un emplacement aléatoire
+// localisation par défaut
 
-randomLocation();
+let city = 'Paris';
+
+// appel initial à la fonction pour afficher la météo à la localisation par défaut
+
+getWeather();
 
 // créer un intervalle pour la récupération des coordonnées aléatoires toutes les 30 secondes
 
-setInterval(randomLocation, 5000 * 6);
+setInterval(getWeather, 5000 * 6);
+
+// obtenir les détails météorologiques de l'API
+
+function getWeather(){
+  let api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric&lang=${lang}`;
+  
+  fetch(api)
+      .then(function(response){
+          let data = response.json();
+          return data;
+      })
+      .then(function(data){
+          weather.temp = Math.floor(data.main.temp);
+          weather.description = data.weather[0].description;
+          weather.iconId = data.weather[0].icon;
+          weather.city = data.name;
+          weather.country = data.sys.country;
+      })
+      .then(function(){
+          displayWeather();
+      })
+      .then(function(){
+        randomLocation();
+      });
+}
+
+// afficher les données météorologiques sur l'interface utilisateur
+
+function displayWeather(){
+  iconElement.innerHTML = `<img src="icons/${weather.iconId}.svg"/>`;
+  tempElement.innerHTML = `${weather.temp}°<span>C</span>`;
+  descElement.innerHTML = weather.description.toUpperCase();
+  locationElement.innerHTML = `${weather.city}, ${weather.country}`;
+}
 
 // générer des coordonnées aléatoires à partir du fichier JSON des villes du monde, récupérer les données de l'API correspondant à cette ville aléatoire et les afficher sur l'interface utilisateur
 
@@ -44,40 +82,7 @@ function randomLocation(){
       }
       let id = Math.floor(Math.random() * 209579)
         if (dataString.map(a => a.id == id)){
-          let city = dataString[id].name
-          getWeather(city)
+          city = dataString[id].name
         }
     });
-}
-
-// obtenir les détails météorologiques de l'API
-
-function getWeather(city){
-  
-  let api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric&lang=${lang}`;
-  
-  fetch(api)
-      .then(function(response){
-          let data = response.json();
-          return data;
-      })
-      .then(function(data){
-          weather.temp = Math.floor(data.main.temp);
-          weather.description = data.weather[0].description;
-          weather.iconId = data.weather[0].icon;
-          weather.city = data.name;
-          weather.country = data.sys.country;
-      })
-      .then(function(){
-          displayWeather();
-      });
-}
-
-// afficher les données météorologiques sur l'interface utilisateur
-
-function displayWeather(){
-  iconElement.innerHTML = `<img src="icons/${weather.iconId}.svg"/>`;
-  tempElement.innerHTML = `${weather.temp}°<span>C</span>`;
-  descElement.innerHTML = weather.description.toUpperCase();
-  locationElement.innerHTML = `${weather.city}, ${weather.country}`;
 }
