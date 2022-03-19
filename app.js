@@ -60,7 +60,7 @@ function getWeather(){
 function displayWeather(){
   iconElement.innerHTML = `<img src="icons/${weather.iconId}.svg"/>`;
   tempElement.innerHTML = `${weather.temp}°<span>C</span>`;
-  descElement.innerHTML = weather.description.toUpperCase();
+  descElement.innerHTML = weather.description;
   locationElement.innerHTML = `${weather.city}, ${weather.country}`;
 }
 
