@@ -160,29 +160,32 @@ body {
     locationElement.innerHTML = `${data.city}, ${data.country}`;
   }
 
-//   function randomLocation(){
+  randomLocation();
 
-// const cities = './city.list.min.json';
-// let city = "";
+  function randomLocation(){
 
-// fetch(cities)
-//   .then(function(response){
-//     let data = response.json();
-//     return data;
-//   })
-//   .then(function(data){
-//     let dataString = JSON.parse(JSON.stringify(data))
-//     for(let i=0; i<dataString.length; i++){
-//       dataString[i].id = i
-//     }
-//     let id = Math.floor(Math.random() * 209579)
-//       if (dataString.map(a => a.id == id)){
-//         city = dataString[id].name
-//         console.log(city)
-//         socket.emit('random city', city)
-//       }
-//   });
-// }
+const cities = './city.list.min.json';
+
+fetch(cities)
+  .then(function(response){
+    let data = response.json();
+    return data;
+  })
+  .then(function(data){
+    let dataString = JSON.parse(JSON.stringify(data))
+    for(let i=0; i<dataString.length; i++){
+      dataString[i].id = i
+    }
+    let id = Math.floor(Math.random() * 209579)
+      if (dataString.map(a => a.id == id)){
+        let coords = {}
+        coords.lon = dataString[id].coord.lon
+        coords.lat = dataString[id].coord.lat
+        console.log(coords)
+        socket.emit('coords', coords)
+      }
+  });
+}
 });
 </script>
 </body>
