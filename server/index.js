@@ -27,23 +27,23 @@ app.get('/', (req, res) => {
 app.use(express.static('public'));
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  // console.log('a user connected');
   getDefaultLocation();
 
   function getDefaultLocation(){
-    axios.get(`http://api.openweathermap.org/data/2.5/weather?q=Paris&units=${units}&appid=${key}`)
+    axios.get(`http://api.openweathermap.org/data/2.5/weather?q=Paris&units=${units}&lang=${lang}&appid=${key}`)
     .then(function(response){
       weather.temp = Math.floor(response.data.main.temp);
       weather.description = response.data.weather[0].description;
       weather.iconId = response.data.weather[0].icon;
       weather.city = response.data.name;
       weather.country = response.data.sys.country;
-      console.log(weather);
+      // console.log(weather);
       socket.emit('weather', weather);
     })
   }
   socket.on('coords', (data) => {
-    console.log(data);
+    // console.log(data);
     axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${data.lat}&lon=${data.lon}&units=${units}&lang=${lang}&appid=${key}`)
     .then(function(response){
       weather.temp = Math.floor(response.data.main.temp);
@@ -51,7 +51,7 @@ io.on('connection', (socket) => {
       weather.iconId = response.data.weather[0].icon;
       weather.city = response.data.name;
       weather.country = response.data.sys.country;
-      console.log(weather);
+      // console.log(weather);
       socket.emit('weather', weather);
     })
   })
